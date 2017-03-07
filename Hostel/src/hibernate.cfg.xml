@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- 数据库连接设置 -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/Hostel</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">tanxiaoqiong</property>
+
+        <!-- 数据库方言设置：MySQL -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		
+        <!-- 开启 Hibernate 自动 session 管理 -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- 设置 SQL 语句输出到 Eclipse 控制台 -->
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+
+        <!-- 第一次加载 hibernate 时根据 model 类会自动建立起表的结构（前提是先建立好数据库），以后加载 hibernate 时根据 model 类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行。-->
+         <property name="hbm2ddl.auto">update</property>
+		
+		<!-- 映射文件 -->
+		<mapping resource="nju/edu/tanqiong/hostel/model/User.hbm.xml"/>
+
+    </session-factory>
+
+</hibernate-configuration>

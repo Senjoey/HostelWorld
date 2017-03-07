@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+        <!-- 启用开发者模式 -->
+		<constant name="struts.devMode" value="true"></constant>
+		<!-- 启用动态方法调用 -->
+		<constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+
+        <!-- 根据不同的返回结果，给出不同的响应界面 -->
+		<package name="user" extends="struts-default"  namespace="/">
+			<action name="user" class="nju.edu.tanqiong.hostel.action.UserAction">
+				<result name="error">/error.jsp</result>
+				<result name="success">/success.jsp</result>
+				<result name="update">/updateuser.jsp</result>
+			</action>
+		</package>
+
+</struts>
