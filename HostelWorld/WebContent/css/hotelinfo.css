@@ -1,0 +1,39 @@
+  * 
+  {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+ }
+
+body {
+    background: #FBEFE1;	
+    font-family: 'Roboto', Arial, Tahoma, Sans-serif, Verdana, Helvetica;
+    font-size: 62.5%;
+    fon-color: #333;
+}
+        
+h1 {
+   color: #2C1201;
+   font-size: 23px;
+   font-family: 微软雅黑;
+}
+
+a {
+    text-decoration: none;   
+}
+        
+li{
+    list-style-type: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+    
+#totalpricetag{
+    font-family: 黑体;
+    font-size: 25px;
+    font-weight: 600;
+    color: #C43F50;
+    line-height: 30px;
+}
