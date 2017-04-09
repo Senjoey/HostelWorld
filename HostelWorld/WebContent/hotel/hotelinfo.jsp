@@ -41,9 +41,6 @@ li {
 
 </head>
 <%
-	User user = (User) session.getAttribute("user");
-%>
-<%
 	Hotel hotel = (Hotel) session.getAttribute("hotel");
 %>
 <body>

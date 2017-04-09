@@ -86,4 +86,9 @@ public class RoomSaleManagerImpl implements RoomSaleManager {
 			}
 		}
 	}
+
+	@Override
+	public List<RoomOrder> findOrder(String hotelId) {
+		return roomSaleDao.findSaleStatistic(hotelId);
+	}
 }

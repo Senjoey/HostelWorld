@@ -2,7 +2,6 @@ package hostelworld.logic;
 
 import java.util.List;
 
-import hostelworld.model.Hotel;
 import hostelworld.model.HotelAccommocdatedStatistic;
 import hostelworld.model.RoomOrder;
 
@@ -32,5 +31,12 @@ public interface RoomSaleManager {
 	 * @return
 	 */
 	public List<HotelAccommocdatedStatistic> getHotelAccommocdatedStatistics();
+	
+	/**
+	 * 找到酒店的所有订单
+	 * @param hotelId
+	 * @return
+	 */
+	public List<RoomOrder> findOrder(String hotelId);
 	
 }

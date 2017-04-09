@@ -2,6 +2,7 @@ package hostelworld.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import hostelworld.action.SaleStatisticBean;
 import hostelworld.logic.RecordManager;
+import hostelworld.logic.RoomSaleManager;
 import hostelworld.logic.impl.RecordManagerImpl;
+import hostelworld.logic.impl.RoomSaleManagerImpl;
 import hostelworld.model.Hotel;
 import hostelworld.model.PlanRoom;
 import hostelworld.model.Room;
@@ -67,23 +71,19 @@ public class CheckServlet extends HttpServlet {
 
 		String type = request.getParameter("type");
 		RecordManager rManager = new RecordManagerImpl();
+		RoomSaleManager roomSaleManager = new RoomSaleManagerImpl();
 
 		if (type.equals("checkRoom")) {// 查询房间
 			RoomCart cart = (RoomCart) session.getAttribute("salecart");
 			cart = new RoomCart();
 			cart.init();
 			String roomId = request.getParameter("room_id");
-
+			System.out.println("The hotel is " + hotel.getHotelId() + " the roomId is " + roomId + " the date is " + date);
 			Room room = rManager.getRoom(hotel.getHotelId(), roomId, date);
 			if (room == null) {
 				out.print("noroom");
 			} else {
 				RoomState roomState = rManager.getRoomState(hotel.getHotelId(), roomId, date);
-				System.out.println(date);
-				System.out.println("酒店 " + hotel.getName());
-				System.out.println(hotel.getHotelId());
-				System.out.println("房间号为 " + roomId);
-				System.out.println("的房间状态为 " + roomState.toString());
 				cart.add(room, roomState);
 				cart.setHidePayPart(true);
 				cart.setHideEditTenantName(true);
@@ -109,8 +109,6 @@ public class CheckServlet extends HttpServlet {
 
 				System.out.println("Is the cart's roomOrder empty? " + cart.getRoomOrders().isEmpty());
 				session.setAttribute("salecart", cart);// 库存相关
-				// 销售订单相关
-
 				out.print(roomState.toString());
 			}
 		} else if (type.equals("delete")) {// 从登记列表中删去房间
@@ -151,6 +149,11 @@ public class CheckServlet extends HttpServlet {
 				// 顺便修改sale表
 				roomOrder.setSaleState(toState.toString());
 				rManager.updateSaleState(roomOrder);
+				//修改对应SaleStatisticBean
+				SaleStatisticBean saleStatisticBean = new SaleStatisticBean();
+				List<RoomOrder> saleList = roomSaleManager.findOrder(hotel.getHotelId());
+				saleStatisticBean.setSaleList(saleList);
+				session.setAttribute("SaleStatisticList", saleStatisticBean);
 				cart.setHideEditTenantName(false);
 			} else {
 				toState = RoomState.left;
@@ -159,32 +162,22 @@ public class CheckServlet extends HttpServlet {
 			cart.modify(planRoom);
 			session.setAttribute("salecart", cart);
 			out.println(cart.getTotal());
-		} else if (type.equals("pay")) {// 确认付款，修改房间销售记录的状态（null->sold非会员/ordered->sold会员）
+		} else if (type.equals("pay")) {// 确认付款，修改房间销售记录的状态
 			String paytype = request.getParameter("paytype");
 			RoomCart cart = (RoomCart) session.getAttribute("salecart");
 			// 付款方式paytype为非会员
-
 			int isMember = 0;// 非会员
-
 			RoomOrder roomOrder = rManager.shopping(hotel.getHotelId(), cart, RoomSaleState.accommodated.toString(), isMember,
 					null, 0, date, request.getParameter("tenantName"));// 添加一条销售记录
+			//修改对应SaleStatisticBean
+			SaleStatisticBean saleStatisticBean = new SaleStatisticBean();
+			List<RoomOrder> saleList = roomSaleManager.findOrder(hotel.getHotelId());
+			saleStatisticBean.setSaleList(saleList);
+			session.setAttribute("SaleStatisticList", saleStatisticBean);
 			out.print(true);
-
 			cart = new RoomCart();
 			cart.init();
-
-			System.out.println("房客信息： " + roomOrder.getTenantName());
 			cart.addRoomOrder(roomOrder);
-//			SaleStatisticBean saleStatisticBean = (SaleStatisticBean)session.getAttribute("SaleStatisticList");
-//			
-//			List<RoomOrder> saleList = saleStatisticBean.getSaleList();
-//			if (saleList ==null) {
-//				saleList = new ArrayList<RoomOrder>();
-//			}
-//			saleList.add(roomOrder);
-//			saleStatisticBean.setSaleList(saleList);
-//			session.setAttribute("SaleStatisticList", saleStatisticBean);
-//			
 			session.setAttribute("salecart", cart);
 			// 付款方式paytype为会员
 		} else if (type.equals("editTenantName")) {// 修改入住人的名字
@@ -200,9 +193,12 @@ public class CheckServlet extends HttpServlet {
 			} else {
 				// 若已有订单记录，则修改房客信息
 				roomOrder.setTenantName(request.getParameter("tenantName"));
-
-				System.out.println("Now the roomOrder's tenant name is " + roomOrder.getTenantName());
 				out.print(rManager.updateTenantName(roomOrder));
+				//修改对应SaleStatisticBean
+				SaleStatisticBean saleStatisticBean = new SaleStatisticBean();
+				List<RoomOrder> saleList = roomSaleManager.findOrder(hotel.getHotelId());
+				saleStatisticBean.setSaleList(saleList);
+				session.setAttribute("SaleStatisticList", saleStatisticBean);
 			}
 		}
 	}
